@@ -1,0 +1,43 @@
+version: '3.7'
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - "./.docker/database:/var/lib/mysql:delegated"
+    # command: --default-authentication-plugin=mysql_native_password --sql-mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+    container_name: ${PROJECT_NAME}-db
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    depends_on:
+      - db
+    ports:
+      - 8082:80
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      PMA_USER: ${PMA_USER}
+      PMA_PASSWORD: ${PMA_PASSWORD}
+    container_name: ${PROJECT_NAME}-phpmyadmin
+  mailhog:
+    restart: always
+    image: mailhog/mailhog:latest
+    container_name: ${PROJECT_NAME}-mailhog
+    ports:
+      - 8081:8025
+      - 1025:1025
+  www:
+    depends_on:
+      - db
+      - mailhog
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      # - "./app/public_html:/var/www/html/public_html:cached"
+      # - "./app/vendor:/var/www/html/vendor:cached"
+      - "./app:/var/www/html:cached"
+    ports:
+      - 8080:80
+      - 443:443
+    container_name: ${PROJECT_NAME}-www

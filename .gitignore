@@ -1,0 +1,3 @@
+/.docker/database/*
+/app/.env
+.env
