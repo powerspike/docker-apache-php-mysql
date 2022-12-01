@@ -25,9 +25,6 @@ RUN a2enmod ssl
 # Set memory limit to 4GB
 RUN echo 'memory_limit = 4096M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
 
-# Copy the WEBSITE .env (not the Docker .env)
-# COPY ./app/.env /var/www/html/.env
-
 # Copy Apache .conf files
 COPY ./.docker/conf/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY ./.docker/conf/apache/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
